@@ -9,50 +9,24 @@ import java.util.function.Predicate;
 
 public class FunctionalInterfacesExamples {
     public static void main(String[] args) {
-        // Consumer examples
-        simpleConsumerExample();
-        andThenConsumerExample();
-        // Bi-consumer examples
-        simpleBiConsumerExample();
-
-        // Predicate examples
+               // Predicate examples
+        /*
+         Predicate takes an argument and returns boolean. Can be chained using operators like 'and', 'or', 'negate'.
+         Static isEqual() and not() methods takes in an object and can be passed around to check for equal when required.
+         */
         predicateExample();
         predicateIsEqualExample();
         // Bi-predicate example
+        /*
+        Bi-predicate is similar to predicate but takes in two arguments.
+         */
         biPredicateExample();
 
         // Predicate + Consumer example
         predicateAndConsumerExample();
-    }
 
-    /** A simple consumer that takes in an object of any type and applies some operations. */
-    private static void simpleConsumerExample() {
-        Consumer<String> stringUpperConsumer = (str) -> System.out.println(str.toUpperCase());
-        stringUpperConsumer.accept("hello");
-    }
-
-    /** Using andThen in consumers to print lower and upper with space in between. */
-    private static void andThenConsumerExample() {
-        List<String> list = Arrays.asList("abc", "dEf", "ghi");
-
-        Consumer<String> lowerConsumer = (str) -> System.out.print(str.toLowerCase());
-        Consumer<String> spaceConcat = (str) -> System.out.print(" ");
-        Consumer<String> upperConsumer = (str) -> System.out.print(str.toUpperCase());
-        Consumer<String> newLine = (str) -> System.out.println();
-
-        list.forEach((element) -> lowerConsumer
-                        .andThen(spaceConcat)
-                        .andThen(upperConsumer)
-                        .andThen(newLine)
-                        .accept(element));
-    }
-
-    /** A simple bi-consumer chaining example. */
-    private static void simpleBiConsumerExample() {
-        BiConsumer<Integer, Integer> multiplyBiConsumer = (a, b) -> System.out.println("Multiplication: " + a * b);
-        BiConsumer<Integer, Integer> divideBiConsumer = (a, b) -> System.out.println("Division: " + a / b);
-
-        multiplyBiConsumer.andThen(divideBiConsumer).accept(50, 5);
+        // Function example
+        simpleFunctionExample();
     }
 
     /** Predicate to check if number is 'not between 2 and 10' */
@@ -90,5 +64,9 @@ public class FunctionalInterfacesExamples {
 
         System.out.println(sameLengthPredicate.test("apple", "grape")); // true
         System.out.println(sameLengthPredicate.test("banana", "kiwi"));  // false
+    }
+
+    private static void simpleFunctionExample() {
+
     }
 }
