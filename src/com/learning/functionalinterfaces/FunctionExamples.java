@@ -1,72 +1,73 @@
 package com.learning.functionalinterfaces;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.*;
 
-public class FunctionalInterfacesExamples {
+public class FunctionExamples {
     public static void main(String[] args) {
-               // Predicate examples
-        /*
-         Predicate takes an argument and returns boolean. Can be chained using operators like 'and', 'or', 'negate'.
-         Static isEqual() and not() methods takes in an object and can be passed around to check for equal when required.
-         */
-        predicateExample();
-        predicateIsEqualExample();
-        // Bi-predicate example
-        /*
-        Bi-predicate is similar to predicate but takes in two arguments.
-         */
-        biPredicateExample();
-
-        // Predicate + Consumer example
-        predicateAndConsumerExample();
-
         // Function example
+        /*
+         Function<T,R> takes one argument<T> and returns an object<S>.
+         Functions can be chained together using compose() and andThen().
+         compose() runs the function before another function.
+         andThen() runs the function after another function.
+         Function.identity(T) returns the input as it is. Useful in some cases like toMap() in streams.
+         */
         simpleFunctionExample();
+
+        // Bi-Function Example
+        /*
+         Same as function but takes two inputs and returns an object.
+         BiFunction has only andThen.
+         */
+        biFunctionExample();
+
+        // UnaryOperator Example
+        /*
+         Unary operator extends Function with the only difference as input and output are of same type.
+         */
+        unaryOperator();
+
+        // BinaryOperator Example
+        /*
+         Binary operator extends BiFunction where both the inputs and output are of same type.
+         BinaryOperator also has minBy() and maxBy() static methods which takes in a Comparator and return min and max of two numbers respectively.
+         */
+        simpleBinaryOperator();
     }
 
-    /** Predicate to check if number is 'not between 2 and 10' */
-    private static void predicateExample() {
-        Predicate<Integer> greaterThanTwo = (number) -> number > 2;
-        Predicate<Integer> lessThanTen = (number) -> number < 10;
-
-        System.out.println(greaterThanTwo.and(lessThanTen).negate().test(17));
-    }
-
-    /** An example using Predicate.isEqual() */
-    private static void predicateIsEqualExample() {
-        Predicate<Integer> isEqualPredicate = Predicate.isEqual(3);
-        // isEqual is a static method, which can be moved around and checked for equals whenever required.
-        isEqualPredicate.test(3);
-    }
-
-    /** Print the result only if the number is between 2 and 10. */
-    private static void predicateAndConsumerExample() {
-        Predicate<Integer> greaterThanTwo = (number) -> number > 2;
-        Predicate<Integer> lessThanTen = (number) -> number < 10;
-
-        Consumer<Integer> printerConsumer = (element) -> {
-            if (greaterThanTwo.and(lessThanTen).test(element)) {
-                System.out.println(element + " is between 2 and 10.");
-            }
-        };
-
-        printerConsumer.accept(7);
-    }
-
-    /** A bi-predicate example which checks if given two strings are equal. */
-    private static void biPredicateExample() {
-        BiPredicate<String, String> sameLengthPredicate = (s1, s2) -> s1.length() == s2.length();
-
-        System.out.println(sameLengthPredicate.test("apple", "grape")); // true
-        System.out.println(sameLengthPredicate.test("banana", "kiwi"));  // false
-    }
-
+    /** Two functions - uppercase and string appender */
     private static void simpleFunctionExample() {
+        Function<String, String> upperCaseFunction = (str) -> str.toUpperCase(); // Input and output are of same type. So they can be UnaryOperator.
+        Function<String, String> stringAppender = (str) -> str + " world";
 
+        System.out.println(stringAppender.andThen(upperCaseFunction).apply("hello"));
+
+        // The below two produce the same results.
+        System.out.println(stringAppender.compose(upperCaseFunction).apply("hello"));
+        System.out.println(upperCaseFunction.andThen(stringAppender).apply("hello"));
+    }
+
+    /** Bi-function takes a number and a predicate and returns num + 10 if the predicate condition satisfies */
+    private static void biFunctionExample() {
+        BiFunction<Integer, Predicate<Integer>, Integer> biFunction =
+                (number, predicate) -> predicate.test(number) ? Integer.valueOf(number + 10) : number;
+
+        Predicate<Integer> betweenPredicate = (num) -> num > 0 && num <= 10;
+
+        System.out.println(biFunction.apply(7, betweenPredicate));
+    }
+
+    /** The functions in the above simpleFunctionExample can be written as UnaryOperator */
+    private static void unaryOperator() {
+        UnaryOperator<String> upperCaseFunction = (str) -> str.toUpperCase();
+        UnaryOperator<String> stringAppender = (str) -> str + " world";
+
+        System.out.println(stringAppender.andThen(upperCaseFunction).apply("hello"));
+    }
+
+    private static void simpleBinaryOperator() {
+        BinaryOperator<String> stringConcatOperator = (str1, str2) -> str1 + str2;
+
+        System.out.println(stringConcatOperator.apply("hello ", "world"));
     }
 }
